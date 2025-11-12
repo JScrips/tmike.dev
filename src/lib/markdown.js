@@ -9,6 +9,7 @@ const projectsDirectory = path.join(process.cwd(), 'src/content/projects');
 
 // Get all blog posts
 export function getAllPosts() {
+    console.log('FIRING GET ALL POSTS')
   if (!fs.existsSync(postsDirectory)) {
     fs.mkdirSync(postsDirectory, { recursive: true });
     return [];

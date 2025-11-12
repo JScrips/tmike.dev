@@ -11,9 +11,13 @@ export async function generateStaticParams() {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }) {
-  const post = await getPostBySlug(params.slug);
+  // ✅ AWAIT params - Next.js 15 requirement
+  const { slug } = await params;
   
-  if (!post) {
+  let post;
+  try {
+    post = await getPostBySlug(slug);
+  } catch (error) {
     return {};
   }
 
@@ -30,11 +34,15 @@ export async function generateMetadata({ params }) {
   };
 }
 
+// ✅ MAIN COMPONENT - Also await params
 export default async function BlogPost({ params }) {
+  // ✅ AWAIT params here too
+  const { slug } = await params;
+  
   let post;
   
   try {
-    post = await getPostBySlug(params.slug);
+    post = await getPostBySlug(slug);
   } catch (error) {
     notFound();
   }
@@ -61,9 +69,9 @@ export default async function BlogPost({ params }) {
       />
 
       <footer style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid #e2e8f0' }}>
-        <Link href="/blog" style={{ color: '#6366f1', fontWeight: 600 }}>
+        <a href="/blog" style={{ color: '#6366f1', fontWeight: 600 }}>
           ← Back to Blog
-        </Link>
+        </a>
       </footer>
     </article>
   );
