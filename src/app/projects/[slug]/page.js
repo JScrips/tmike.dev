@@ -1,4 +1,4 @@
-import { getProjectBySlug, getAllProjects } from '@/lib/markdown';
+import { getProjectBySlug, getAllProjects } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }) {
       description: project.description,
       images: project.image ? [project.image] : [],
     },
-  };
+  }; 
 }
 
 export default async function ProjectPage({ params }) {

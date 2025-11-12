@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getAllProjects } from '@/lib/markdown';
+import { getAllProjects } from '../../lib/markdown';
 
 export const metadata = {
   title: 'Projects',

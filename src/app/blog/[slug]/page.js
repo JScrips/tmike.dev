@@ -1,4 +1,4 @@
-import { getPostBySlug, getAllPosts } from '@/lib/markdown';
+import { getPostBySlug, getAllPosts } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
 
 // Generate static params for all blog posts
