@@ -56,7 +56,7 @@ const Navbar = () => {
     }
   }, [isMobileMenuOpen]);
 
-  const isActivePath = (path: string) => {
+  const isActivePath = (path) => {
     if (path === '/') return pathname === '/';
     return pathname.startsWith(path);
   };

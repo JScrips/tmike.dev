@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getAllPosts } from '@/lib/markdown';
+import { getAllPosts } from '../../lib/markdown';
 
 export const metadata = {
   title: 'Blog',
