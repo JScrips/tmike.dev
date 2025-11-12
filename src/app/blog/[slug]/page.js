@@ -1,4 +1,3 @@
-export const runtime = 'edge';
 import { getPostBySlug, getAllPosts } from '../../../lib/markdown';
 import { notFound } from 'next/navigation';
 
