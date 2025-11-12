@@ -27,7 +27,7 @@ export async function generateMetadata({ params }) {
       description: project.description,
       images: project.image ? [project.image] : [],
     },
-  };
+  }; 
 }
 
 export default async function ProjectPage({ params }) {
