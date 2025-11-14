@@ -1,37 +1,26 @@
 {
   "compilerOptions": {
-    "alwaysStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "paths": {
-      "@components/*": [
-        "./src/components/*"
-      ]
-    },
     "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "noEmit": true,
-    "incremental": true,
-    "module": "esnext",
     "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
-      },
-      {
-        "name": "typescript-plugin-css-modules",
       }
-    ]
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -39,24 +28,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    "src/app/blog/[slug]/page.js",
-    "src/app/blog/page.js",
-    "src/app/projects/[slug]/page.js",
-    "src/app/projects/page.js",
-    "src/app/api/contact/route.js",
-    "src/app/contact/page.js",
-    "src/app/about/page.js",
-    "src/app/contact/[slug]/page.js",
-    "src/app/layout.tsx",
-    "src/app/page.tsx",
-    "src/components/BlogCard.js",
-    "src/components/Footer.js",
-    "src/components/Navbar.js",
-    "src/components/ProjectCard.js",
-    "src/components/SEO.js"
+    "**/*.mts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
