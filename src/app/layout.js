@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google';
 import { Navbar } from '../components/Navbar';
 import './globals.css'
-
+import { ThemeProvider } from 'next-themes';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
@@ -50,12 +50,12 @@ export const metadata = {
 export default function RootLayout({children,
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <ThemeProvider disableTransitionOnChange attribute={'class'} defaultTheme="system" enableSystem>
         <Navbar />
-        <main style={{ paddingTop: '70px' }}>
           {children}
-        </main>
+        </ThemeProvider>
       </body>
     </html>
   );
