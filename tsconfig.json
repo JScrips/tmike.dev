@@ -27,6 +27,9 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "typescript-plugin-css-modules",
       }
     ]
   },
@@ -45,8 +48,8 @@
     "src/app/contact/page.js",
     "src/app/about/page.js",
     "src/app/contact/[slug]/page.js",
-    "src/app/layout.js",
-    "src/app/page.js",
+    "src/app/layout.tsx",
+    "src/app/page.tsx",
     "src/components/BlogCard.js",
     "src/components/Footer.js",
     "src/components/Navbar.js",
