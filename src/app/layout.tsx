@@ -53,8 +53,10 @@ export default function RootLayout({children,
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider disableTransitionOnChange attribute={'class'} defaultTheme="system" enableSystem>
-        <Navbar />
-          {children}
+          <Navbar />
+            <main style={{ paddingTop: '70px' }}>
+            {children}
+            </main>
         </ThemeProvider>
       </body>
     </html>
