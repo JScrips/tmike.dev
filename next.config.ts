@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async headers() {
@@ -21,6 +22,14 @@ const nextConfig = {
       },
     ];
   },
+=======
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  turbopack: {
+    root: "./",
+  }
+>>>>>>> Stashed changes
 };
 
 module.exports = nextConfig;
