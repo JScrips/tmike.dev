@@ -199,7 +199,7 @@ const Hero = () => {
 
           {/* Name - the hero */}
           <h1 className={styles.name}>
-            Terrance<EasterEggWord word="&apos;TMike&apos;" eggKey="TMike" /> Brown
+            Terrance <EasterEggWord word="&apos;TMike&apos;" eggKey="TMike" /> Brown
           </h1>
 
           {/* Tagline */}
