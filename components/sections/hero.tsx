@@ -11,7 +11,7 @@ const easterEggs: Record<string, string[]> = {
 };
 
 // Skill categories with colors
-type SkillCategory = "framework" | "language" | "tool" | "practice" | "soft";
+type SkillCategory = "framework" | "language" | "tool" | "practice" | "soft" | "cherry";
 
 const categoryColors: Record<SkillCategory, string> = {
   framework: "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400",
@@ -19,6 +19,7 @@ const categoryColors: Record<SkillCategory, string> = {
   tool: "bg-purple-500/10 border-purple-500/30 text-purple-600 dark:text-purple-400",
   practice: "bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400",
   soft: "bg-pink-500/10 border-pink-500/30 text-pink-600 dark:text-pink-400",
+  cherry: "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400"
 };
 
 interface Skill {
@@ -28,6 +29,12 @@ interface Skill {
 }
 
 const skills: Skill[] = [
+    // Cloud & Backend (From Your Resume)
+  { name: "AWS", category: "cherry", quips: ["Practiced Practitioner"] },
+  { name: "Node.js", category: "cherry", quips: ["JavaScript everywhere", "async/await evangelist", "V8 engine enthusiast"] },
+  { name: "Kubernetes", category: "cherry", quips: ["k8s config master", "pod orchestrator", "99.9% uptime guardian"] },
+  { name: "AI Integration", category: "cherry", quips: ["LLM API wrangler", "prompt engineer by day", "saved 40% dev time with AI"] },
+
   // Frameworks
   { name: "React", category: "framework", quips: ["it's not a framework, actually", "useEverything()", "I dream in JSX"] },
   { name: "Next.js", category: "framework", quips: ["App Router supremacy", "SSR? SSG? yes.", "Vercel's favorite child"] },
@@ -48,14 +55,6 @@ const skills: Skill[] = [
   { name: "CI/CD", category: "tool", quips: ["deploy on green", "pipeline architect", "automate or die"] },
     { name: "Storybook", category: "tool", quips: ["where components go to be documented", "isolation therapy for UI", "the component zoo"] },
 
-
-  // Cloud & Backend (From Your Resume)
-  { name: "AWS", category: "cloud", quips: ["Practiced Practitioner"] },
-  { name: "Node.js", category: "backend", quips: ["JavaScript everywhere", "async/await evangelist", "V8 engine enthusiast"] },
-  { name: "Kubernetes", category: "devops", quips: ["k8s config master", "pod orchestrator", "99.9% uptime guardian"] },
-
-  // AI & Modern Tools (Your Secret Weapon)
-{ name: "AI Integration", category: "emerging", quips: ["LLM API wrangler", "prompt engineer by day", "saved 40% dev time with AI"] },
   // Practices (Keep These, They're Great)
   { name: "Accessibility (WCAG)", category: "practice", quips: ["the web is for everyone", "screen reader tested", "a11y is not optional"] },
   { name: "Design Systems", category: "practice", quips: ["consistency is key", "tokens for everything", "one source of truth"] },
@@ -215,6 +214,7 @@ const Hero = () => {
             <span className={`${styles.legendItem} ${categoryColors.tool}`}>Tools</span>
             <span className={`${styles.legendItem} ${categoryColors.practice}`}>Practices</span>
             <span className={`${styles.legendItem} ${categoryColors.soft}`}>Soft Skills</span>
+            <span className={`${styles.legendItem} ${categoryColors.cherry}`}>Cherry on Top</span>
           </div>
           {/* Tech stack with categories */}
           <div className={styles.techStack}>
