@@ -1,7 +1,19 @@
-const Home = () => {
+import { Navigation, Footer } from "@/components/layout";
+import { Hero, About, Skills, Projects, BlogPreview, Contact } from "@/components/sections";
+
+export default function Home() {
   return (
-  <div className="font-atkinson">Basic Home Page</div>
+    <>
+      <Navigation />
+      <main>
+        <Hero />
+        <About />
+        <Skills />
+        <Projects />
+        <BlogPreview />
+        <Contact />
+      </main>
+      <Footer />
+    </>
   );
 }
-
-export default Home;

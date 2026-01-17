@@ -20,9 +20,6 @@
     "plugins": [
       {
         "name": "next"
-      },
-      {
-        "name": "postcss-ts"
       }
     ],
     "paths": {
