@@ -207,6 +207,7 @@ const Hero = () => {
             I engineer <TypewriterWord /> that perform quietly and delight{" "}
             <EasterEggWord word="unexpectedly." eggKey="unexpectedly" />
           </p>
+          <div className="pb-8 border-t border-border"></div>
           {/* Legend */}
           <div className={styles.legend}>
             <span className={`${styles.legendItem} ${categoryColors.framework}`}>Frameworks</span>
