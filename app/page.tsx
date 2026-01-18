@@ -4,7 +4,7 @@ import { Hero, About, Projects, BlogPreview, Contact } from "@/components/sectio
 export default async function Home() {
   return (
     <>
-      <Navigation />
+      <Navigation>
       <main>
         <Hero />
         <About />
@@ -12,7 +12,8 @@ export default async function Home() {
         <Projects />
         <Contact />
       </main>
-      <Footer />
+        <Footer />
+        </Navigation>
     </>
   );
 }

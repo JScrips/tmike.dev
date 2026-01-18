@@ -14,7 +14,7 @@ const navLinks = [
 
 ];
 
-export function Navigation() {
+export function Navigation({children}: any) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -36,8 +36,9 @@ export function Navigation() {
   };
 
   return (
+    <div>
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-background/80 backdrop-blur-md border-b border-border"
           : "bg-transparent"
@@ -97,10 +98,12 @@ export function Navigation() {
             )}
           </button>
         </nav>
-
-        {/* Mobile Menu */}
+      </Container>
+    </header>
+      {children}
+              {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
+          <div className="md:hidden py-4 border-t border-border bg-background/90 w-full sticky bottom-0  text-center">
             <ul className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <li key={link.name}>
@@ -128,8 +131,8 @@ export function Navigation() {
               </li>
             </ul>
           </div>
-        )}
-      </Container>
-    </header>
+        )} 
+  </div>
+  
   );
 }
