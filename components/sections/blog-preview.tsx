@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Section, SectionHeader } from "@/components/ui";
 import { getRecentPosts } from "@/lib/blog";
 
-export function BlogPreview() {
-  const posts = getRecentPosts(3);
+export async function BlogPreview() {
+  const posts = await Promise.resolve(getRecentPosts(3));
 
   if (posts.length === 0) {
     return null;

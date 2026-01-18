@@ -6,11 +6,12 @@ import { usePathname } from "next/navigation";
 import { Container } from "@/components/ui";
 
 const navLinks = [
+  { name: "Storybook", href: "https://storybook.tmike.dev", },
   { name: "About", href: "/#about" },
-  { name: "Skills", href: "/#skills" },
   { name: "Projects", href: "/#projects" },
   { name: "Blog", href: "/blog" },
   { name: "Contact", href: "/#contact" },
+
 ];
 
 export function Navigation() {
@@ -57,6 +58,7 @@ export function Navigation() {
             {navLinks.map((link) => (
               <li key={link.name}>
                 <Link
+                {...link}
                   href={link.href}
                   className={`text-sm transition-colors ${
                     isActive(link.href)
