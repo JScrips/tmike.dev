@@ -6,6 +6,7 @@ interface Project {
   tags: string[];
   link?: string;
   github?: string;
+  lastActive?: string;
   status: "live" | "in-progress" | "concept";
 }
 
@@ -18,7 +19,8 @@ const projects: Project[] = [
     tags: ["Next.js", "React", "TypeScript", "Tailwind"],
     status: "live",
     link: "https://tmike.dev",
-    github: "https://github.com/jscrips/tmike.dev"
+    github: "https://github.com/jscrips/tmike.dev",
+    lastActive: "01/18/2026"
   },
   {
     title: "Storybook",
@@ -27,7 +29,8 @@ const projects: Project[] = [
     tags: ["Next.js", "Storybook", "React", "TypeScript", "Tailwind"],
     status: "live",
     link: "https://storybook.tmike.dev",
-    github: "https://github.com/jscrips/storybook"
+    github: "https://github.com/jscrips/storybook",
+    lastActive: "01/18/2026"
   },
 ];
 
