@@ -6,24 +6,31 @@ interface Project {
   tags: string[];
   link?: string;
   github?: string;
+  lastActive?: string;
   status: "live" | "in-progress" | "concept";
 }
 
 // Placeholder projects - replace with your actual projects
 const projects: Project[] = [
   {
-    title: "This Portfolio",
+    title: "Tmike.dev",
     description:
-      "A Next.js 16 portfolio built with React 19, TypeScript, and Tailwind CSS v4. You're looking at it right now. Meta, isn't it?",
+      "My personal website and portfolio. You're looking at it right now. Deep.",
     tags: ["Next.js", "React", "TypeScript", "Tailwind"],
-    status: "in-progress",
+    status: "live",
+    link: "https://tmike.dev",
+    github: "https://github.com/jscrips/tmike.dev",
+    lastActive: "01/18/2026"
   },
   {
-    title: "Project Coming Soon",
+    title: "Storybook",
     description:
-      "Something cool is brewing. Check back later or connect with me to learn more about what I'm working on.",
-    tags: ["???"],
-    status: "concept",
+      "My own Personal Storybook Instance where develop and document components for use in future projects",
+    tags: ["Next.js", "Storybook", "React", "TypeScript", "Tailwind"],
+    status: "live",
+    link: "https://storybook.tmike.dev",
+    github: "https://github.com/jscrips/storybook",
+    lastActive: "01/18/2026"
   },
 ];
 

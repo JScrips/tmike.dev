@@ -103,7 +103,14 @@ export function Navigation({children}: any) {
       {children}
               {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border bg-background/90 w-full sticky bottom-0  text-center">
+          <>
+            {/* Backdrop overlay - closes menu when tapped */}
+            <div
+              className="md:hidden fixed inset-0 z-40"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-hidden="true"
+            />
+          <div className="md:hidden py-4 border-t border-border bg-background/90 w-full sticky bottom-0 text-center z-50">
             <ul className="flex flex-col gap-4">
               {navLinks.map((link) => (
                 <li key={link.name}>
@@ -131,7 +138,8 @@ export function Navigation({children}: any) {
               </li>
             </ul>
           </div>
-        )} 
+          </>
+        )}
   </div>
   
   );
