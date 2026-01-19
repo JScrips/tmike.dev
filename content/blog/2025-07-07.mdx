@@ -1,0 +1,170 @@
+---
+title: "XState: Lit or Lie?"
+description: "How XState helped me build payment flows at Chase. State machines > useState chaos."
+date: "2025-09-09"
+tags: ["react", "typescript", "xstate", "state-management"]
+published: true
+---
+
+At some point during building payment flows at Chase, our component states looked like this:
+```typescript
+const [step, setStep] = useState(1);
+const [formData, setFormData] = useState({});
+const [isValid, setIsValid] = useState(false);
+const [showError, setShowError] = useState(false);
+const [isSubmitting, setIsSubmitting] = useState(false);
+// ... 12 more useState hooks
+```
+
+Every new requirement meant another boolean flag.
+Every edge case meant another `useEffect` or component prop to sync state.
+Every bug fix meant tracing through interdependent state updates.
+
+Then our Application Owner ( manager ) pushed us to use XState.
+
+---
+
+## The Problem
+
+Multiple Customer Flows, Multiple Customer Requirements, One State Machine:
+- 5+ multi-step forms
+- Conditional paths based on previous answers
+- Async validation at each step
+- Document uploads with retry logic
+- Complex business rules for progression
+- Speedbumps + Pop Ups based on Api Responses
+
+Managing this with useState had me feeling like Spider-Man trying to hold that train full of civilians together.
+
+---
+
+## The XState Solution
+
+XState treats UI flows as state machines.
+So basically, You define states, transitions, and guards.
+The machine handles the rest.
+
+**Simple example:**
+```typescript
+const orchestrationMachine = createMachine({
+  id: 'orchestration',
+  initial: 'entry',
+  
+  context: {
+    formData: {
+      personal: null,
+      api: null,
+    },
+    currentStep: 1,
+  },
+  
+  states: {
+    entry: {
+      on: {
+        NEXT: { 
+          target: 'review',
+          actions: 'savePersonalInfo',
+        },
+      },
+    },
+    
+    review: {
+      initial: 'idle',
+      states: {
+        idle: {},
+        speedbump: {
+          on: {
+            CONTINUE: { target: 'idle' },
+            CANCEL: { target: '#orchestration.entry' },
+          },
+        },
+      },
+      on: {
+        NEXT: {
+          target: 'confirm', 
+          guard: 'hasApi',
+        },
+        BACK: { target: 'entry' },
+      },
+    },
+    
+    confirm: {
+      on: {
+        SUBMIT: { target: 'submitting' },
+        BACK: { target: 'review' },
+      },
+    },
+    
+    submitting: {
+      invoke: {
+        src: 'callApi',
+        onDone: { target: 'success' },
+        onError: { target: 'error' },
+      },
+    },
+    
+    success: { type: 'final' },
+    
+    error: {
+      on: {
+        RETRY: { target: 'confirm' },
+      },
+    },
+  },
+});
+```
+---
+
+## What We Actually Used
+
+**Global States:** Top-level flow steps (entry review, confirm)
+
+**Context Manipulation:** Store form data across steps using `assign`:
+```typescript
+actions: {
+  savePersonalInfo: assign({
+    formData: (context, event) => ({
+      ...context.formData,
+      personal: event.data,
+    }),
+  }),
+}
+```
+
+**Guards:** Conditional transitions based on business logic:
+```typescript
+guards: {
+  hasApi: (context) => context.formData.api !== null,
+}
+```
+
+**Invocations:** Async operations without manual loading state management:
+```typescript
+invoke: {
+  src: 'callApi',
+  onDone: { target: 'confirm' },
+  onError: { target: 'error' },
+}
+```
+
+**Actions:** Side effects like analytics tracking, URL sync, prefetching
+---
+
+## When To Use XState
+
+**Good fit:**
+- Multi-step flows with conditional logic
+- Complex async operations with multiple outcomes
+- Workflows that need to be visualized
+- Anywhere you have >5 useState for managing flow state
+
+**Not worth it:**
+- Simple toggle states
+- Basic form validation
+- One-off components
+
+---
+**Lit.** No cap.
+
+XState had a learning curve for sure -- But definitely saved a lot of time and future-proofing.
+---
