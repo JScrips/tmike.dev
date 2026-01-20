@@ -117,21 +117,26 @@ export function Navigation({children}: any) {
             />
           <div className="md:hidden py-4 border-t border-border bg-background/90 w-full sticky bottom-0 text-center z-50">
             <ul className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className={`block transition-colors ${
-                      isActive(link.href)
-                        ? "text-accent"
-                        : "text-muted hover:text-foreground"
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
+            {navLinks.map((link) => (
+              <li key={link.name}>
+                {
+                  link.name === 'Storybook' ? (
+                    <a className="flex justify-center" href="https://storybook.tmike.dev" target="_blank">
+                      <img src="https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg"/>
+                    </a>) : (<Link
+                {...link}
+                  href={link.href}
+                  className={`text-sm transition-colors ${
+                    isActive(link.href)
+                      ? "text-accent"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  {link.name}
+                </Link>)
+                }
+              </li>
+            ))}
               <li className="pt-2">
                 <Link
                   href="/#contact"
