@@ -58,7 +58,11 @@ export function Navigation({children}: any) {
           <ul className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <li key={link.name}>
-                <Link
+                {
+                  link.name === 'Storybook' ? (
+                    <a href="https://storybook.tmike.dev" target="_blank">
+                      <img src="https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg"/>
+                    </a>) : (<Link
                 {...link}
                   href={link.href}
                   className={`text-sm transition-colors ${
@@ -68,7 +72,8 @@ export function Navigation({children}: any) {
                   }`}
                 >
                   {link.name}
-                </Link>
+                </Link>)
+                }
               </li>
             ))}
             <li>
