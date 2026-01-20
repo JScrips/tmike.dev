@@ -1,0 +1,272 @@
+---
+title: "Dark Mode in Storybook 10"
+description: "What happens when you combine Storybook 10 & Tailwind v4."
+date: "2026-01-20"
+tags: ["storybook", "tailwind", "dark-mode", "accessibility"]
+published: true
+---
+
+Nothing says "productive morning" like discovering the community addon you were 
+about to install has been deprecated. I wanted dark mode in Storybook. Simple 
+request. The internet pointed me to `storybook-dark-mode`. Cool. Except it 
+wasn't cool, because they hung it's jersey in the rafters.
+
+## The Setup: Storybook 10 + Tailwind v4 = Profit????
+- Storybook 10
+- Tailwind v4
+- Next.js/React
+
+The old approach used `storybook-dark-mode` - a community addon that worked 
+great until it didn't. 
+
+Storybook 8+ shipped `@storybook/addon-themes` as the official 
+replacement.
+
+To enable dark mode in Tailwind, you configure it. Go Figure.
+
+Used to be a simple `darkMode: 'class'` in your `tailwind.config.js`. 
+Not anymore! Tailwind v4 said "nah, we're done with JavaScript configs". I tried the old approach anyway. Just for funsies.
+
+```js
+// This doesn't work in v4, but I tried it anyway
+module.exports = {
+  darkMode: 'class', // <-- R.I.P
+}
+```
+
+Opened DevTools. Saw `@media (prefers-color-scheme: dark)` instead of 
+class-based selectors. Then figured I was in danger.
+
+## The v4 Solution: Custom Variants in CSS
+
+Turns out Tailwind v4 wants you to declare dark mode in your base CSS file 
+using `@custom-variant`. This tells Tailwind to apply `dark:` utilities to 
+anything with a `dark` class and its descendants.
+
+```css
+//global.css
+@import "tailwindcss";
+
+@source "../app/**/*.{js,ts,jsx,tsx}";
+@source "../components/**/*.{js,ts,jsx,tsx}";
+
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:where(.dark, .dark *));           <---------
+```
+
+Ok Done. Right? Wrong.
+
+## Wiring Up Storybook's Theme Addon
+
+Now that Tailwind knows what to do with `.dark`, we need Storybook to actually 
+apply that class. Enter `@storybook/addon-themes`.
+
+First, register it in `main.ts`:
+
+```ts
+import type { StorybookConfig } from "@storybook/nextjs-vite";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const config: StorybookConfig = {
+  stories: [
+    "./documentation/**/*.@(mdx)",
+    "../app/**/*.stories.@(js|jsx|ts|tsx)",
+  ],
+  addons: [
+    "@storybook/addon-themes", //                      <------------  The chosen one
+    "@chromatic-com/storybook",
+    "@storybook/addon-vitest",
+    "@storybook/addon-a11y",
+    "@storybook/addon-docs",
+    "@storybook/addon-onboarding",
+  ],
+  framework: "@storybook/nextjs-vite",
+  staticDirs: [path.join(__dirname, "..", "public")],
+};
+export default config;
+```
+
+Then set up the decorator in `preview.tsx`:
+
+```tsx
+import { withThemeByClassName } from "@storybook/addon-themes";
+import type { Preview, ReactRenderer } from "@storybook/react";
+
+const preview: Preview = {
+  decorators: [
+    withThemeByClassName<ReactRenderer>({
+      themes: {
+        light: "",
+        dark: "dark",
+      },
+      defaultTheme: "light",
+    }),
+  ],
+  // ... rest of config
+};
+```
+
+So like, copying and pasting is super sick, very cool, many wow. 
+
+But also, what does it do? 
+
+Well, `withThemeByClassName` wraps every story in a div. When 
+you toggle to dark mode in Storybook's toolbar, it slaps a `dark` class on that 
+wrapper. Tailwind sees the class, applies your `dark:` utilities. 
+
+Now you're done. That's it. That's the deal. We're finished. Believe me. Or dont.
+
+But as Trinidad James famously said: "Don't believe me, just watch". 
+
+On to the next:
+
+## Why I Chose Semantic Tokens Over Direct Utilities
+
+I could've just used Tailwind's colors everywhere:
+
+```jsx
+<div className="bg-gray-900 dark:bg-gray-50">
+  <p className="text-gray-100 dark:text-gray-900">Some text</p>
+</div>
+```
+
+This works. It's also a huge pain in my ass.
+
+Imagine deciding your card background needs to be a slightly different color... 
+
+You're now hunting through 50+ components, updating every instance. Hard Pass. Nty. SKIP.
+
+Instead, I went with semantic tokens - CSS variables that describe *purpose*, 
+not appearance:
+
+```css
+:root {
+  --app-bg-default: #f0f0f0;
+  --app-bg-surface: #ffffff;
+  --app-primary: #675048;
+  --app-text-default: #211a17;
+  --app-text-muted: #4c4848;
+  --app-border-default: #e0e0e0;
+}
+
+.dark {
+  --app-bg-default: #120d0c;
+  --app-bg-surface: #1a1513;
+  --app-primary: #a3a1a0;
+  --app-text-default: #faf9f8;
+  --app-text-muted: #c1bfbe;
+  --app-border-default: #2a2523;
+}
+```
+
+Now if I need to tweak the surface color, I change *one variable*. Every 
+component using `--app-bg-surface` updates automatically.  No one man should have all that power. Shout out Kanye.
+
+## The Naming Struggle Is Real
+
+Choosing names for these tokens was harder than the actual implementation. Do 
+you go with `background-primary`? `bg-default`? Raw color names like `gray-50`?
+
+I landed on a hierarchy:
+- `default` - main background/text
+- `surface` - elevated elements (cards, modals)
+- `primary` - brand color
+- `muted` - secondary text
+- `defaultBorder` - structural borders
+
+Are these names perfect? No. But they're consistent, and consistency beats 
+perfection when you're slogging through files at 2am.
+
+## The Circular Reference Incident
+
+Here's where I got clever and immediately regretted it. I tried mapping my CSS 
+variables directly to Tailwind utilities:
+
+```css
+@theme inline {
+  --bg-default: var(--bg-default); /* chef's kiss */
+}
+```
+
+Tailwind looked at this, looked at me, and crashed. Circular references aren't 
+just frowned upon - they're impossible. The solution required separate 
+namespaces:
+
+```css
+@theme inline {
+  --color-default: var(--app-bg-default);
+  --color-surface: var(--app-bg-surface);
+  --color-primary: var(--app-primary);
+  --color-defaultText: var(--app-text-default);
+  --color-muted: var(--app-text-muted);
+  --color-defaultBorder: var(--app-border-default);
+}
+```
+
+The `--color-` prefix isn't optional - it tells Tailwind these are color 
+utilities. This generates classes like `bg-default`, `text-defaultText`, 
+`border-defaultBorder`.
+
+Now your components look like this:
+
+```jsx
+<div className="bg-default p-8">
+  <div className="bg-surface p-6 border border-defaultBorder">
+    <h2 className="text-defaultText">Heading</h2>
+    <p className="text-muted">Supporting text</p>
+    <button className="bg-primary hover:bg-primary-hover text-buttonText">
+      Action
+    </button>
+  </div>
+</div>
+```
+
+Same classes work in light and dark mode. No manual `dark:` prefixes needed on 
+every element. Just toggle the wrapper class and watch your entire UI adapt.
+
+## The Accessibility Wake-Up Call
+
+I thought I was done. Deployed to Storybook, toggled between themes, everything 
+looked nice. Then I ran a WCAG contrast checker.
+
+WCAG AA requires a 4.5:1 contrast ratio for normal text. My initial `text-muted` 
+on `bg-surface` clocked in at 3.2:1. Fail.
+
+This is why you don't pick colors because they "look nice." You test them. I 
+adjusted `text-muted` from `#a5a3a2` to `#4c4848` in light mode. Dark mode 
+needed iteration too - my `text-default` and `text-muted` were too similar, 
+I was your visually impaired cousin's worst nightmare.
+
+Testing every text/background combination is tedious. It's also not optional. 
+Accessibility isn't a nice-to-have feature you bolt on later - it's a 
+constraint you design within from the start.
+
+## What Worked, What Didn't, What I'd Do Again
+
+**What I learned:**
+
+- Tailwind v4 is CSS-first. Your v3 config is useless here.
+- Storybook decorators wrap components to inject context (themes, providers, 
+  etc.)
+- Semantic tokens feel like extra work until you need to change something
+- DevTools is mandatory for debugging CSS generation
+- Contrast ratios aren't suggestions
+
+**Mistakes that taught me things:**
+
+- Tried v3 patterns in v4 (always RTFM for your version)
+- Created circular CSS variable references (namespaces matter)
+- Forgot the `--color-` prefix requirement (Tailwind won't infer color utilities)
+- Assumed visual appeal meant accessible (it didn't)
+
+**What I'd do differently:**
+
+Not much, honestly. The detours were part of the learning. Maybe I'd read the 
+Tailwind v4 migration guide *before* spending an hour debugging why my config 
+wasn't working. But that's asking a lot.
