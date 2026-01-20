@@ -1,0 +1,172 @@
+---
+title: "Dark Mode in Storybook"
+description: "storybook-dark-mode got deprecated. RIP."
+date: "2025-01-19"
+tags: ["storybook", "dark-mode", "react", "tailwind"]
+published: true
+---
+
+## The Goal
+
+1. **Component preview theming** — Toggle dark/light mode for the actual
+   components in the canvas
+2. **Storybook UI theming** — Make the sidebar and toolbar respect system
+   preferences
+
+## File Structure
+
+Here's what we're working with:
+```
+.storybook/
+├── global/
+│   ├── theme.ts          # New - toolbar toggle config
+│   └── globalTypes.ts    # Modified - exports theme
+├── decorators/
+│   ├── ThemeDecorator.tsx # New - applies theme to DOM
+│   └── decorators.tsx     # Modified - adds ThemeDecorator
+└── manager.ts             # New - themes Storybook UI
+```
+
+## Step 1: Define the Theme Global Type
+
+Storybook's `globalTypes` let you add toolbar controls that persist across
+stories. We're using this to create a theme toggle.
+
+```ts
+// .storybook/global/theme.ts
+import type { GlobalTypes } from "@storybook/types";
+
+export const theme: GlobalTypes = {
+  theme: {
+    name: "Theme",
+    description: "Global theme for components",
+    defaultValue: "light",
+    toolbar: {
+      icon: "sun",
+      items: [
+        { value: "light", icon: "sun", title: "Light" },
+        { value: "dark", icon: "moon", title: "Dark" },
+      ],
+      dynamicTitle: true,
+    },
+  },
+};
+```
+
+Then export it from your `globalTypes.ts`:
+
+```ts
+// .storybook/global/globalTypes.ts
+export { theme } from "./theme";
+```
+
+## Step 2: Create the Theme Decorator
+
+The decorator reads the toolbar selection and applies it to the DOM. This is
+where the actual theme switching happens.
+
+```tsx
+// .storybook/decorators/ThemeDecorator.tsx
+import { useEffect } from "react";
+import type { Decorator } from "@storybook/react";
+
+export const ThemeDecorator: Decorator = (Story, context) => {
+  const theme = context.globals.theme || "light";
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+
+    if (theme === "dark") {
+      root.classList.add("dark");
+      root.setAttribute("data-theme", "dark");
+      body.style.backgroundColor = "#1a1a1a";
+      body.style.color = "#ffffff";
+    } else {
+      root.classList.remove("dark");
+      root.setAttribute("data-theme", "light");
+      body.style.backgroundColor = "#ffffff";
+      body.style.color = "#000000";
+    }
+  }, [theme]);
+
+  return <Story />;
+};
+```
+
+A few things happening here:
+
+- **`context.globals.theme`** — This is how we read the toolbar selection
+- **`.dark` class** — For Tailwind's dark mode variant
+- **`data-theme` attribute** — For CSS custom properties if you're using them
+- **Body styles** — Ensures the canvas background matches the theme
+
+Add the decorator to your decorators array:
+
+```tsx
+// .storybook/decorators/decorators.tsx
+import { ThemeDecorator } from "./ThemeDecorator";
+
+export const decorators = [
+  ThemeDecorator,
+  // ...other decorators
+];
+```
+
+## Step 3: Theme the Storybook UI
+
+This part handles the sidebar, toolbar, and all that chrome around your
+components. I went with system preference detection because fighting with
+users' OS settings feels wrong.
+
+```ts
+// .storybook/manager.ts
+import { addons } from "@storybook/manager-api";
+import { themes } from "@storybook/theming";
+
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+addons.setConfig({
+  theme: prefersDark ? themes.dark : themes.light,
+});
+```
+
+## Step 4: Update Your CSS
+
+Make sure your global styles handle both themes. If you're using Tailwind,
+you're probably already set up for this with the `dark:` prefix.
+
+```css
+/* app/globals.css */
+
+/* Dark mode via class (Tailwind approach) */
+.dark {
+  color-scheme: dark;
+}
+
+/* Dark mode via data attribute (CSS custom properties approach) */
+[data-theme="dark"] {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+}
+
+/* System preference fallback */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    color-scheme: dark;
+  }
+}
+```
+
+## Usage
+
+Once everything's wired up:
+
+1. **Toolbar toggle** — Click the sun/moon icon in the Storybook toolbar
+2. **Components** — Use Tailwind's `dark:` prefix for dark mode styles
+
+```tsx
+<div className="bg-white dark:bg-gray-900 text-black dark:text-white">
+  Your component content
+</div>
+```
